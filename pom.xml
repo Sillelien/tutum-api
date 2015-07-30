@@ -17,7 +17,6 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -84,13 +83,15 @@
             <url>https://jitpack.io</url>
         </repository>
         <repository>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-        <id>bintray.central</id>
-        <name>bintray</name>
-        <url>http://dl.bintray.com/neilellis/maven</url>
-    </repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>bintray.central</id>
+            <name>bintray</name>
+            <url>http://dl.bintray.com/neilellis/maven</url>
+        </repository>
     </repositories>
+
+
 
 </project>
