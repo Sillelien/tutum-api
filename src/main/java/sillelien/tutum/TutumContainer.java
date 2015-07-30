@@ -36,4 +36,8 @@ public class TutumContainer {
     @Override public String toString() {
         return json.toString();
     }
+
+    public String uuid() {
+        return json.$("uuid").toString();
+    }
 }

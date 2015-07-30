@@ -5,10 +5,28 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import me.neilellis.dollar.api.var;
+import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.drafts.Draft_10;
+import org.java_websocket.drafts.Draft_17;
+import org.java_websocket.drafts.Draft_75;
+import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONObject;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static me.neilellis.dollar.api.DollarStatic.$;
@@ -27,8 +45,18 @@ public class TutumAPI {
 
     private static SuperSimpleCache<String, var> cache = new SuperSimpleCache<>(100000);
 
+    private static final String user;
+    private static final String key;
+
     static {
-        AUTH_HEADERS = $("Authorization", "ApiKey neilellis:5e212d0b326312b42ba776ce90278254fe1cc626").$(
+        String auth = System.getenv("TUTUM_AUTH");
+        String userKey = auth.split(" ")[1];
+        String[] userKeyArray = userKey.split(":");
+        user=userKeyArray[0];
+        key=userKeyArray[1];
+
+
+        AUTH_HEADERS = $("Authorization", auth).$(
                 "Accept", "application/json").toMap();
 
         state = new StateMachineConfig<>();
@@ -438,6 +466,47 @@ public class TutumAPI {
             return $(jsonResponse.getBody());
         });
         return new TutumContainer(response);
+
+    }
+
+
+    public List<var> exec(TutumContainer container, String command) throws URISyntaxException, ExecutionException, InterruptedException, KeyManagementException, NoSuchAlgorithmException, IOException {
+        CompletableFuture<List<var>> future = new CompletableFuture<>();
+        List<var> output = new ArrayList<>();
+        String url = "wss://stream.tutum.co/v1/container/" + container.uuid() + "/exec/?command="+ URLEncoder.encode(command)+"&user=" + user + "&token=" + key;
+        System.out.println("Url is "+url);
+        WebSocketClient socketClient = new WebSocketClient(new URI(url)) {
+            @Override
+            public void onMessage(String message) {
+                System.out.println("Received "+message);
+                output.add($(message));
+            }
+
+            @Override
+            public void onOpen(ServerHandshake handshake) {
+                System.out.println("Sending "+command);
+                this.send(command+"\n");
+            }
+
+            @Override
+            public void onClose(int code, String reason, boolean remote) {
+                System.out.println("Done "+reason+" "+code);
+                future.complete(output);
+            }
+
+            @Override
+            public void onError(Exception ex) {
+                ex.printStackTrace();
+            }
+
+        };
+        SSLContext sslContext = null;
+        sslContext = SSLContext.getInstance( "TLS" );
+        sslContext.init( null, null, null ); // will use java's default key and trust store which is sufficient unless you deal with self-signed certificates
+
+        socketClient.setWebSocketFactory( new DefaultSSLWebSocketClientFactory( sslContext ) );
+        socketClient.connectBlocking();
+        return future.get();
 
     }
 
