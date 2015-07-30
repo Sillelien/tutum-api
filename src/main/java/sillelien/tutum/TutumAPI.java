@@ -7,14 +7,9 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import me.neilellis.dollar.api.var;
 import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
 import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft_10;
-import org.java_websocket.drafts.Draft_17;
-import org.java_websocket.drafts.Draft_75;
 import org.java_websocket.handshake.ServerHandshake;
-import org.json.JSONObject;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,7 +29,7 @@ import static me.neilellis.dollar.api.DollarStatic.$;
 /**
  * @author <a href="http://uk.linkedin.com/in/neilellis">Neil Ellis</a>
  */
-public class TutumAPI {
+public class TutumAPI implements Tutum {
 
     private static final Map<String, String> AUTH_HEADERS;
     public static final int MAX_RETRY = 3;
@@ -89,12 +84,14 @@ public class TutumAPI {
                 .permit(ServiceAction.TERMINATE, ServiceState.TERMINATING);
     }
 
+    @Override
     public TutumStack createStack(String stackName, List<TutumService> stackServices) {
         final List<var> services = stackServices.stream().map(TutumService::asVar).collect(Collectors.toList());
         return createStackFromVar(stackName, services);
     }
 
 
+    @Override
     public void linkServices(String linkName, String serviceFrom, String serviceTo) {
         TutumService fromService = getServiceByName(serviceFrom);
         TutumService toService = getServiceByName(serviceTo);
@@ -102,6 +99,7 @@ public class TutumAPI {
         updateService(toService);
     }
 
+    @Override
     public TutumService updateService(TutumService service) {
 
         HttpResponse<String> jsonResponse = null;
@@ -152,6 +150,7 @@ public class TutumAPI {
         return new TutumStack($(jsonResponse.getBody()));
     }
 
+    @Override
     public TutumService getServiceByName(String name) {
         final var response = cache.getOrCreate("get_service_by_name:" + name, CHECK_FOR_SERVICE_CACHE_MILLI, () -> {
             HttpResponse<String> jsonResponse = null;
@@ -186,6 +185,7 @@ public class TutumAPI {
         return getService(tutumService.uuid());
     }
 
+    @Override
     public TutumStack getStackByName(String name) {
         final var response = cache.getOrCreate("get_stack_by_name:" + name, CHECK_FOR_SERVICE_CACHE_MILLI, () -> {
             HttpResponse<String> jsonResponse = null;
@@ -221,11 +221,7 @@ public class TutumAPI {
     }
 
 
-    public interface ServiceExistsFunction<T, R> {
-        R apply(T t) throws Exception;
-
-    }
-
+    @Override
     public String checkForService(String name, ServiceExistsFunction<TutumService, String> exists,
                                   Callable<String> doesNotExist) throws
             Exception {
@@ -265,6 +261,7 @@ public class TutumAPI {
     }
 
 
+    @Override
     public String checkForStack(String name, ServiceExistsFunction<TutumStack, String> exists,
                                 Callable<String> doesNotExist) throws
             Exception {
@@ -304,7 +301,8 @@ public class TutumAPI {
     }
 
 
-    public var startService(String uuid) throws TutumException {
+    @Override
+    public TutumResponse startService(String uuid) throws TutumException {
         HttpResponse<String> jsonResponse = null;
         try {
             jsonResponse = Unirest.post("https://dashboard.tutum.co/api/v1/service/" + uuid + "/start/")
@@ -323,11 +321,12 @@ public class TutumAPI {
             Bug.report(e, $(uuid));
             throw new TutumException(e);
         }
-        return $(jsonResponse.getBody());
+        return new TutumResponse($(jsonResponse.getBody()));
     }
 
 
-    public var startStack(String uuid) throws TutumException {
+    @Override
+    public TutumResponse startStack(String uuid) throws TutumException {
         HttpResponse<String> jsonResponse = null;
         try {
             jsonResponse = Unirest.post("https://dashboard.tutum.co/api/v1/stack/" + uuid + "/start/")
@@ -346,10 +345,11 @@ public class TutumAPI {
             Bug.report(e, $(uuid));
             throw new TutumException(e);
         }
-        return $(jsonResponse.getBody());
+        return new TutumResponse($(jsonResponse.getBody()));
     }
 
 
+    @Override
     public TutumService getServiceByURI(String uri) throws TutumException {
         if (!uri.startsWith("/")) {
             throw new TutumException("Uri '" + uri + "' is invalid.");
@@ -377,6 +377,7 @@ public class TutumAPI {
 
     }
 
+    @Override
     public TutumService getService(String uuid) throws TutumException {
         final var response = cache.getOrCreate("get_service:" + uuid, GET_OPERATION_CACHE_MILLI, () -> {
             HttpResponse<String> jsonResponse = null;
@@ -401,6 +402,7 @@ public class TutumAPI {
 
     }
 
+    @Override
     public TutumStack getStack(String uuid) throws TutumException {
         final var response = cache.getOrCreate("get_stack:" + uuid, GET_OPERATION_CACHE_MILLI, () -> {
             HttpResponse<String> jsonResponse = null;
@@ -426,6 +428,7 @@ public class TutumAPI {
     }
 
 
+    @Override
     public TutumService createService(TutumService service) throws TutumException {
         HttpResponse<String> jsonResponse = null;
         System.out.println(service.toString());
@@ -453,6 +456,7 @@ public class TutumAPI {
     }
 
 
+    @Override
     public TutumContainer getContainer(String containerUrl) throws TutumException {
         final var response = cache.getOrCreate("get_container:" + containerUrl, GET_OPERATION_CACHE_MILLI, () -> {
             HttpResponse<String> jsonResponse = null;
@@ -479,8 +483,9 @@ public class TutumAPI {
     }
 
 
-    public List<var> exec(TutumContainer container, String command) throws URISyntaxException, ExecutionException, InterruptedException, KeyManagementException, NoSuchAlgorithmException, IOException {
-        CompletableFuture<List<var>> future = new CompletableFuture<>();
+    @Override
+    public TutumExecResponse exec(TutumContainer container, String command) throws URISyntaxException, ExecutionException, InterruptedException, KeyManagementException, NoSuchAlgorithmException, IOException {
+        CompletableFuture<TutumExecResponse> future = new CompletableFuture<>();
         List<var> output = new ArrayList<>();
         String url = "wss://stream.tutum.co/v1/container/" + container.uuid() + "/exec/?command="+ URLEncoder.encode(command)+"&user=" + user + "&token=" + key;
         System.out.println("Url is "+url);
@@ -500,7 +505,7 @@ public class TutumAPI {
             @Override
             public void onClose(int code, String reason, boolean remote) {
                 System.out.println("Done "+reason+" "+code);
-                future.complete(output);
+                future.complete(new TutumExecResponse(output));
             }
 
             @Override

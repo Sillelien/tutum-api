@@ -28,14 +28,12 @@ public class TutumAPITest {
 
     @Test
     public void testExec() throws Exception {
-        TutumAPI api = new TutumAPI();
+        Tutum api = new TutumAPI();
         TutumService service = api.getServiceByName("tutum-api-exec-test");
         String containerUrl = service.containers().get(0);
         TutumContainer container = api.getContainer(containerUrl);
-        List<var> result = api.exec(container, "ls -la /");
+        TutumExecResponse result = api.exec(container, "ls -la /");
         assertTrue(result.size() > 0);
-        for (var s : result) {
-            System.out.println(s);
-        }
+        System.out.println(result);
     }
 }
