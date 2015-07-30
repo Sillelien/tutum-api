@@ -46,5 +46,5 @@ public interface Tutum {
 
     TutumContainer getContainer(String containerUrl) throws TutumException;
 
-    TutumExecResponse exec(TutumContainer container, String command) throws URISyntaxException, ExecutionException, InterruptedException, KeyManagementException, NoSuchAlgorithmException, IOException;
+    TutumExecResponse exec(TutumContainer container, String command) throws TutumException;
 }

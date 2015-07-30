@@ -484,43 +484,47 @@ public class TutumAPI implements Tutum {
 
 
     @Override
-    public TutumExecResponse exec(TutumContainer container, String command) throws URISyntaxException, ExecutionException, InterruptedException, KeyManagementException, NoSuchAlgorithmException, IOException {
-        CompletableFuture<TutumExecResponse> future = new CompletableFuture<>();
-        List<var> output = new ArrayList<>();
-        String url = "wss://stream.tutum.co/v1/container/" + container.uuid() + "/exec/?command="+ URLEncoder.encode(command)+"&user=" + user + "&token=" + key;
-        System.out.println("Url is "+url);
-        WebSocketClient socketClient = new WebSocketClient(new URI(url)) {
-            @Override
-            public void onMessage(String message) {
-                System.out.println("Received "+message);
-                output.add($(message));
-            }
+    public TutumExecResponse exec(TutumContainer container, String command) throws TutumException {
+        try {
+            CompletableFuture<TutumExecResponse> future = new CompletableFuture<>();
+            List<var> output = new ArrayList<>();
+            String url = "wss://stream.tutum.co/v1/container/" + container.uuid() + "/exec/?command="+ URLEncoder.encode(command)+"&user=" + user + "&token=" + key;
+            System.out.println("Url is "+url);
+            WebSocketClient socketClient = new WebSocketClient(new URI(url)) {
+                @Override
+                public void onMessage(String message) {
+                    System.out.println("Received "+message);
+                    output.add($(message));
+                }
 
-            @Override
-            public void onOpen(ServerHandshake handshake) {
-                System.out.println("Sending "+command);
-                this.send(command+"\n");
-            }
+                @Override
+                public void onOpen(ServerHandshake handshake) {
+                    System.out.println("Sending "+command);
+                    this.send(command+"\n");
+                }
 
-            @Override
-            public void onClose(int code, String reason, boolean remote) {
-                System.out.println("Done "+reason+" "+code);
-                future.complete(new TutumExecResponse(output));
-            }
+                @Override
+                public void onClose(int code, String reason, boolean remote) {
+                    System.out.println("Done "+reason+" "+code);
+                    future.complete(new TutumExecResponse(output));
+                }
 
-            @Override
-            public void onError(Exception ex) {
-                ex.printStackTrace();
-            }
+                @Override
+                public void onError(Exception ex) {
+                    ex.printStackTrace();
+                }
 
-        };
-        SSLContext sslContext = null;
-        sslContext = SSLContext.getInstance( "TLS" );
-        sslContext.init( null, null, null ); // will use java's default key and trust store which is sufficient unless you deal with self-signed certificates
+            };
+            SSLContext sslContext = null;
+            sslContext = SSLContext.getInstance( "TLS" );
+            sslContext.init( null, null, null ); // will use java's default key and trust store which is sufficient unless you deal with self-signed certificates
 
-        socketClient.setWebSocketFactory( new DefaultSSLWebSocketClientFactory( sslContext ) );
-        socketClient.connectBlocking();
-        return future.get();
+            socketClient.setWebSocketFactory( new DefaultSSLWebSocketClientFactory( sslContext ) );
+            socketClient.connectBlocking();
+            return future.get();
+        } catch (NoSuchAlgorithmException | KeyManagementException | ExecutionException | InterruptedException | URISyntaxException e) {
+            throw new TutumException(e);
+        }
 
     }
 
