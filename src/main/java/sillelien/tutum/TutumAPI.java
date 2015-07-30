@@ -50,11 +50,20 @@ public class TutumAPI {
 
     static {
         String auth = System.getenv("TUTUM_AUTH");
-        String userKey = auth.split(" ")[1];
-        String[] userKeyArray = userKey.split(":");
-        user=userKeyArray[0];
-        key=userKeyArray[1];
-
+        if(auth == null) {
+            throw new RuntimeException("You must supply an environment variable TUTUM_AUTH unless you are running in a Tutum container in which case it is not needed.");
+        }
+        String[] authSplit = auth.split(" ");
+        if(authSplit.length != 2) {
+            throw new RuntimeException("Could not parse the key from "+auth);
+        }
+        String userKey = authSplit[1];
+        String[] userKeySplit = userKey.split(":");
+        if(userKeySplit.length != 2) {
+            throw new RuntimeException("Could not parse the user/key from "+auth);
+        }
+        user=userKeySplit[0];
+        key=userKeySplit[1];
 
         AUTH_HEADERS = $("Authorization", auth).$(
                 "Accept", "application/json").toMap();
