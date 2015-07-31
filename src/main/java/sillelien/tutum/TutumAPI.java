@@ -8,6 +8,8 @@ import me.neilellis.dollar.api.var;
 import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
@@ -32,6 +34,8 @@ import static me.neilellis.dollar.api.DollarStatic.$;
 public class TutumAPI implements Tutum {
 
     private static final Map<String, String> AUTH_HEADERS;
+    private static final Logger log= LoggerFactory.getLogger(TutumAPI.class);
+
     public static final int MAX_RETRY = 3;
     public static final int RETRY_DELAY = 2000;
     public static final int GET_OPERATION_CACHE_MILLI = 1000;
@@ -172,11 +176,11 @@ public class TutumAPI implements Tutum {
                 throw new TutumException(e);
 
             }
-            System.out.println("Uncached response");
+            log.debug("Uncached response");
             return $(jsonResponse.getBody());
 
         });
-        System.out.println("Response was " + response.toHumanString());
+        log.debug("Response was " + response.toHumanString());
         final var objects = response.$("objects");
         if (objects.$isEmpty().isTrue()) {
             return null;
@@ -207,11 +211,11 @@ public class TutumAPI implements Tutum {
                 throw new TutumException(e);
 
             }
-            System.out.println("Uncached response");
+            log.debug("Uncached response");
             return $(jsonResponse.getBody());
 
         });
-        System.out.println("Response was " + response.toHumanString());
+        log.debug("Response was " + response.toHumanString());
         final var objects = response.$("objects");
         if (objects.$isEmpty().isTrue()) {
             return null;
@@ -245,18 +249,18 @@ public class TutumAPI implements Tutum {
                 throw new TutumException(e);
 
             }
-            System.out.println("Uncached response");
+            log.debug("Uncached response");
             return $(jsonResponse.getBody());
 
         });
-        System.out.println("Response was " + response.toHumanString());
+        log.debug("Response was " + response.toHumanString());
         final var objects = response.$("objects");
         if (objects.$isEmpty().isTrue()) {
-            System.out.println("Does not exist");
+            log.debug("Does not exist");
             return doesNotExist.call();
         }
         TutumService tutumService = new TutumService(objects.$list().get(0));
-        System.out.println("Service exists and is " + tutumService.toString());
+        log.debug("Service exists and is " + tutumService.toString());
         return exists.apply(tutumService);
     }
 
@@ -285,18 +289,18 @@ public class TutumAPI implements Tutum {
                 throw new TutumException(e);
 
             }
-            System.out.println("Uncached response");
+            log.debug("Uncached response");
             return $(jsonResponse.getBody());
 
         });
-        System.out.println("Response was " + response.toHumanString());
+        log.debug("Response was " + response.toHumanString());
         final var objects = response.$("objects");
         if (objects.$isEmpty().isTrue()) {
-            System.out.println("Does not exist");
+            log.debug("Does not exist");
             return doesNotExist.call();
         }
         TutumStack tutumService = new TutumStack(objects.$list().get(0));
-        System.out.println("Service exists and is " + tutumService.toString());
+        log.debug("Service exists and is " + tutumService.toString());
         return exists.apply(tutumService);
     }
 
@@ -431,7 +435,7 @@ public class TutumAPI implements Tutum {
     @Override
     public TutumService createService(TutumService service) throws TutumException {
         HttpResponse<String> jsonResponse = null;
-        System.out.println(service.toString());
+        log.debug(service.toString());
         try {
             jsonResponse = Unirest.post("https://dashboard.tutum.co/api/v1/service/")
                     .headers(AUTH_HEADERS)
@@ -489,23 +493,23 @@ public class TutumAPI implements Tutum {
             CompletableFuture<TutumExecResponse> future = new CompletableFuture<>();
             List<var> output = new ArrayList<>();
             String url = "wss://stream.tutum.co/v1/container/" + container.uuid() + "/exec/?command="+ URLEncoder.encode(command)+"&user=" + user + "&token=" + key;
-            System.out.println("Url is "+url);
+            log.debug("Url is "+url);
             WebSocketClient socketClient = new WebSocketClient(new URI(url)) {
                 @Override
                 public void onMessage(String message) {
-                    System.out.println("Received "+message);
+                    log.debug("Received "+message);
                     output.add($(message));
                 }
 
                 @Override
                 public void onOpen(ServerHandshake handshake) {
-                    System.out.println("Sending "+command);
+                    log.debug("Sending "+command);
                     this.send(command+"\n");
                 }
 
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
-                    System.out.println("Done "+reason+" "+code);
+                    log.debug("Done "+reason+" "+code);
                     future.complete(new TutumExecResponse(output));
                 }
 
