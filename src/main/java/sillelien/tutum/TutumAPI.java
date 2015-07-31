@@ -503,8 +503,6 @@ public class TutumAPI implements Tutum {
 
                 @Override
                 public void onOpen(ServerHandshake handshake) {
-                    log.debug("Sending "+command);
-                    this.send(command+"\n");
                 }
 
                 @Override
