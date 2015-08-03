@@ -1,10 +1,10 @@
 package sillelien.tutum;
 
-import me.neilellis.dollar.api.var;
+import com.sillelien.dollar.api.var;
 
 import java.util.List;
 
-import static me.neilellis.dollar.api.DollarStatic.$;
+import static com.sillelien.dollar.api.DollarStatic.$;
 
 /**
  * (c) 2015 Cazcade Limited

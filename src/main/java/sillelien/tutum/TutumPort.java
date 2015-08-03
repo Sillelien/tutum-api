@@ -1,6 +1,6 @@
 package sillelien.tutum;
 
-import me.neilellis.dollar.api.var;
+import com.sillelien.dollar.api.var;
 
 /**
  * @author <a href="http://uk.linkedin.com/in/neilellis">Neil Ellis</a>

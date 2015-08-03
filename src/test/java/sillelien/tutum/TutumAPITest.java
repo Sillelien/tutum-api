@@ -1,6 +1,6 @@
 package sillelien.tutum;
 
-import me.neilellis.dollar.api.var;
+import com.sillelien.dollar.api.var;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

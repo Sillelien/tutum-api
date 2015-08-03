@@ -1,6 +1,6 @@
 package sillelien.tutum;
 
-import me.neilellis.dollar.api.var;
+import com.sillelien.dollar.api.var;
 
 /**
  * (c) 2015 Cazcade Limited

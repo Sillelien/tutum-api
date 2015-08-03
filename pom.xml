@@ -49,9 +49,9 @@
         </dependency>
 
         <dependency>
-            <groupId>me.neilellis</groupId>
+            <groupId>com.github.sillelien</groupId>
             <artifactId>dollar-core</artifactId>
-            <version>0.1.4-r945</version>
+            <version>0.1.6</version>
         </dependency>
 
         <dependency>

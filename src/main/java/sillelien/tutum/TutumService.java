@@ -1,7 +1,7 @@
 package sillelien.tutum;
 
-import me.neilellis.dollar.api.collections.ImmutableMap;
-import me.neilellis.dollar.api.var;
+import com.sillelien.dollar.api.collections.ImmutableMap;
+import com.sillelien.dollar.api.var;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import static me.neilellis.dollar.api.DollarStatic.$;
+import static com.sillelien.dollar.api.DollarStatic.$;
 
 /**
  * @author <a href="http://uk.linkedin.com/in/neilellis">Neil Ellis</a>
