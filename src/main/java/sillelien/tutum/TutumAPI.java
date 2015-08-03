@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2015 Sillelien
+ *
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package sillelien.tutum;
 
 import com.github.oxo42.stateless4j.StateMachineConfig;
@@ -12,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -34,7 +51,7 @@ import static com.sillelien.dollar.api.DollarStatic.$;
 public class TutumAPI implements Tutum {
 
     private static final Map<String, String> AUTH_HEADERS;
-    private static final Logger log= LoggerFactory.getLogger(TutumAPI.class);
+    private static final Logger log = LoggerFactory.getLogger(TutumAPI.class);
 
     public static final int MAX_RETRY = 3;
     public static final int RETRY_DELAY = 2000;
@@ -49,20 +66,20 @@ public class TutumAPI implements Tutum {
 
     static {
         String auth = System.getenv("TUTUM_AUTH");
-        if(auth == null) {
+        if (auth == null) {
             throw new RuntimeException("You must supply an environment variable TUTUM_AUTH unless you are running in a Tutum container in which case it is not needed.");
         }
         String[] authSplit = auth.split(" ");
-        if(authSplit.length != 2) {
-            throw new RuntimeException("Could not parse the key from "+auth);
+        if (authSplit.length != 2) {
+            throw new RuntimeException("Could not parse the key from " + auth);
         }
         String userKey = authSplit[1];
         String[] userKeySplit = userKey.split(":");
-        if(userKeySplit.length != 2) {
-            throw new RuntimeException("Could not parse the user/key from "+auth);
+        if (userKeySplit.length != 2) {
+            throw new RuntimeException("Could not parse the user/key from " + auth);
         }
-        user=userKeySplit[0];
-        key=userKeySplit[1];
+        user = userKeySplit[0];
+        key = userKeySplit[1];
 
         AUTH_HEADERS = $("Authorization", auth).$(
                 "Accept", "application/json").toMap();
@@ -90,16 +107,16 @@ public class TutumAPI implements Tutum {
 
     @Override
     public TutumStack createStack(String stackName, List<TutumService> stackServices) {
-        final List<var> services = stackServices.stream().map(TutumService::asVar).collect(Collectors.toList());
+        final List<var> services = stackServices.stream().map(tutumService -> ((TutumServiceImpl) (tutumService)).asVar()).collect(Collectors.toList());
         return createStackFromVar(stackName, services);
     }
 
 
     @Override
-    public void linkServices(String linkName, String serviceFrom, String serviceTo) {
+    public void linkServices(String alias, String serviceFrom, String serviceTo) {
         TutumService fromService = getServiceByName(serviceFrom);
-        TutumService toService = getServiceByName(serviceTo);
-        toService.link(linkName, fromService.uri());
+        TutumServiceImpl toService = getServiceByName(serviceTo);
+        toService.link(alias, fromService.uri());
         updateService(toService);
     }
 
@@ -118,14 +135,14 @@ public class TutumAPI implements Tutum {
                         " response was " +
                         jsonResponse.getStatus() +
                         ": " +
-                        jsonResponse.getStatusText(), service.asVar(), $(jsonResponse.getBody()));
+                        jsonResponse.getStatusText(), ((TutumServiceImpl) service).asVar(), $(jsonResponse.getBody()));
                 throw new TutumException("Could not update service");
             }
         } catch (UnirestException e) {
-            Bug.report(e, service.asVar());
+            Bug.report(e, ((TutumServiceImpl) service).asVar());
             throw new TutumException(e);
         }
-        return new TutumService($(jsonResponse.getBody()));
+        return new TutumServiceImpl($(jsonResponse.getBody()));
     }
 
     public TutumStack createStackFromVar(String stackName, List<var> services) {
@@ -151,11 +168,11 @@ public class TutumAPI implements Tutum {
             throw new TutumException(e);
 
         }
-        return new TutumStack($(jsonResponse.getBody()));
+        return new TutumStackImpl($(jsonResponse.getBody()));
     }
 
     @Override
-    public TutumService getServiceByName(String name) {
+    public TutumServiceImpl getServiceByName(String name) {
         final var response = cache.getOrCreate("get_service_by_name:" + name, CHECK_FOR_SERVICE_CACHE_MILLI, () -> {
             HttpResponse<String> jsonResponse = null;
             try {
@@ -185,7 +202,7 @@ public class TutumAPI implements Tutum {
         if (objects.$isEmpty().isTrue()) {
             return null;
         }
-        TutumService tutumService = new TutumService(objects.$list().get(0));
+        TutumService tutumService = new TutumServiceImpl(objects.$list().get(0));
         return getService(tutumService.uuid());
     }
 
@@ -220,14 +237,14 @@ public class TutumAPI implements Tutum {
         if (objects.$isEmpty().isTrue()) {
             return null;
         }
-        TutumStack tutumService = new TutumStack(objects.$list().get(0));
+        TutumStack tutumService = new TutumStackImpl(objects.$list().get(0));
         return getStack(tutumService.uuid());
     }
 
 
     @Override
-    public String checkForService(String name, ServiceExistsFunction<TutumService, String> exists,
-                                  Callable<String> doesNotExist) throws
+    public <T> T checkForService(String name, ServiceExistsFunction<TutumService, T> exists,
+                                 Callable<T> doesNotExist) throws
             Exception {
         final var response = cache.getOrCreate("check_for_service:" + name, CHECK_FOR_SERVICE_CACHE_MILLI, () -> {
             HttpResponse<String> jsonResponse = null;
@@ -259,15 +276,15 @@ public class TutumAPI implements Tutum {
             log.debug("Does not exist");
             return doesNotExist.call();
         }
-        TutumService tutumService = new TutumService(objects.$list().get(0));
+        TutumServiceImpl tutumService = new TutumServiceImpl(objects.$list().get(0));
         log.debug("Service exists and is " + tutumService.toString());
         return exists.apply(tutumService);
     }
 
 
     @Override
-    public String checkForStack(String name, ServiceExistsFunction<TutumStack, String> exists,
-                                Callable<String> doesNotExist) throws
+    public <T> T checkForStack(String name, ServiceExistsFunction<TutumStack, T> exists,
+                                Callable<T> doesNotExist) throws
             Exception {
         final var response = cache.getOrCreate("check_for_stack:" + name, CHECK_FOR_SERVICE_CACHE_MILLI, () -> {
             HttpResponse<String> jsonResponse = null;
@@ -299,9 +316,14 @@ public class TutumAPI implements Tutum {
             log.debug("Does not exist");
             return doesNotExist.call();
         }
-        TutumStack tutumService = new TutumStack(objects.$list().get(0));
+        TutumStackImpl tutumService = new TutumStackImpl(objects.$list().get(0));
         log.debug("Service exists and is " + tutumService.toString());
         return exists.apply(tutumService);
+    }
+
+    @Override
+    public TutumService buildService(Map<String, Object> kv) {
+        return new TutumServiceImpl($(kv));
     }
 
 
@@ -325,7 +347,7 @@ public class TutumAPI implements Tutum {
             Bug.report(e, $(uuid));
             throw new TutumException(e);
         }
-        return new TutumResponse($(jsonResponse.getBody()));
+        return new TutumResponseImpl($(jsonResponse.getBody()));
     }
 
 
@@ -349,7 +371,7 @@ public class TutumAPI implements Tutum {
             Bug.report(e, $(uuid));
             throw new TutumException(e);
         }
-        return new TutumResponse($(jsonResponse.getBody()));
+        return new TutumResponseImpl($(jsonResponse.getBody()));
     }
 
 
@@ -377,12 +399,12 @@ public class TutumAPI implements Tutum {
             }
             return $(jsonResponse.getBody());
         });
-        return new TutumService(response);
+        return new TutumServiceImpl(response);
 
     }
 
     @Override
-    public TutumService getService(String uuid) throws TutumException {
+    public TutumServiceImpl getService(String uuid) throws TutumException {
         final var response = cache.getOrCreate("get_service:" + uuid, GET_OPERATION_CACHE_MILLI, () -> {
             HttpResponse<String> jsonResponse = null;
             try {
@@ -402,7 +424,7 @@ public class TutumAPI implements Tutum {
             }
             return $(jsonResponse.getBody());
         });
-        return new TutumService(response);
+        return new TutumServiceImpl(response);
 
     }
 
@@ -427,13 +449,13 @@ public class TutumAPI implements Tutum {
             }
             return $(jsonResponse.getBody());
         });
-        return new TutumStack(response);
+        return new TutumStackImpl(response);
 
     }
 
 
     @Override
-    public TutumService createService(TutumService service) throws TutumException {
+    public TutumService createService(TutumServiceDefinition service) throws TutumException {
         HttpResponse<String> jsonResponse = null;
         log.debug(service.toString());
         try {
@@ -444,60 +466,64 @@ public class TutumAPI implements Tutum {
                     .asString();
             if (jsonResponse.getStatus() >= 400) {
                 Bug.report("Failed to create service " +
-                        service.uuid() +
+                        service +
                         " response was " +
                         jsonResponse.getStatus() +
                         ": " +
-                        jsonResponse.getStatusText(), service.asVar(), $(jsonResponse.getBody()));
+                        jsonResponse.getStatusText(), ((TutumServiceImpl) service).asVar(), $(jsonResponse.getBody()));
                 throw new TutumException("Could not create service", jsonResponse.getStatus());
             }
         } catch (UnirestException e) {
-            Bug.report(e, service.asVar());
+            Bug.report(e, ((TutumServiceImpl) service).asVar());
             throw new TutumException(e);
 
         }
-        return new TutumService($(jsonResponse.getBody()));
+        return new TutumServiceImpl($(jsonResponse.getBody()));
     }
 
 
     @Override
-    public TutumContainer getContainer(String containerUrl) throws TutumException {
-        final var response = cache.getOrCreate("get_container:" + containerUrl, GET_OPERATION_CACHE_MILLI, () -> {
+    public TutumContainer getContainer(String path) throws TutumException {
+        final var response = cache.getOrCreate("get_container:" + path, GET_OPERATION_CACHE_MILLI, () -> {
             HttpResponse<String> jsonResponse = null;
             try {
-                final String url = "https://dashboard.tutum.co/" + containerUrl;
+                final String url = "https://dashboard.tutum.co/" + path;
                 jsonResponse = getWithRetry(url);
                 if (jsonResponse.getStatus() >= 400) {
                     Bug.report("Failed to get container " +
-                            containerUrl +
+                            path +
                             " response was " +
                             jsonResponse.getStatus() +
                             ": " +
-                            jsonResponse.getStatusText(), $(containerUrl), $(jsonResponse.getBody()));
+                            jsonResponse.getStatusText(), $(path), $(jsonResponse.getBody()));
                     throw new TutumException("Could not retrieve container");
                 }
             } catch (UnirestException e) {
-                Bug.report(e, $(containerUrl));
+                Bug.report(e, $(path));
                 throw new TutumException(e);
             }
             return $(jsonResponse.getBody());
         });
-        return new TutumContainer(response);
+        return new TutumContainerImpl(response);
 
     }
 
-
     @Override
     public TutumExecResponse exec(TutumContainer container, String command) throws TutumException {
+        return exec(container.uuid(),command);
+    }
+
+    @Override
+    public TutumExecResponse exec(String uuid, String command) throws TutumException {
         try {
             CompletableFuture<TutumExecResponse> future = new CompletableFuture<>();
             List<var> output = new ArrayList<>();
-            String url = "wss://stream.tutum.co/v1/container/" + container.uuid() + "/exec/?command="+ URLEncoder.encode(command)+"&user=" + user + "&token=" + key;
-            log.debug("Url is "+url);
+            String url = "wss://stream.tutum.co/v1/container/" + uuid + "/exec/?command=" + URLEncoder.encode(command) + "&user=" + user + "&token=" + key;
+            log.debug("Url is " + url);
             WebSocketClient socketClient = new WebSocketClient(new URI(url)) {
                 @Override
                 public void onMessage(String message) {
-                    log.debug("Received "+message);
+                    log.debug("Received " + message);
                     output.add($(message));
                 }
 
@@ -507,7 +533,7 @@ public class TutumAPI implements Tutum {
 
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
-                    log.debug("Done "+reason+" "+code);
+                    log.debug("Done " + reason + " " + code);
                     future.complete(new TutumExecResponse(output));
                 }
 
@@ -518,10 +544,10 @@ public class TutumAPI implements Tutum {
 
             };
             SSLContext sslContext = null;
-            sslContext = SSLContext.getInstance( "TLS" );
-            sslContext.init( null, null, null ); // will use java's default key and trust store which is sufficient unless you deal with self-signed certificates
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, null, null); // will use java's default key and trust store which is sufficient unless you deal with self-signed certificates
 
-            socketClient.setWebSocketFactory( new DefaultSSLWebSocketClientFactory( sslContext ) );
+            socketClient.setWebSocketFactory(new DefaultSSLWebSocketClientFactory(sslContext));
             socketClient.connectBlocking();
             return future.get();
         } catch (NoSuchAlgorithmException | KeyManagementException | ExecutionException | InterruptedException | URISyntaxException e) {

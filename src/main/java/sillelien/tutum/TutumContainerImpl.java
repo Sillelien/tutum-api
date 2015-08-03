@@ -18,9 +18,35 @@
 
 package sillelien.tutum;
 
+import com.sillelien.dollar.api.var;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * @author <a href="http://uk.linkedin.com/in/neilellis">Neil Ellis</a>
  */
-public enum ServiceAction {
-    START, STOP, REDEPLOY, TERMINATE
+public class TutumContainerImpl extends VarBackedTutumObject implements TutumContainer  {
+
+    public TutumContainerImpl(var json) {
+
+        this.json = json;
+    }
+
+    @Override
+    public List<TutumPort> ports() {
+        return json.$("container_ports").$list().stream().map(TutumPort::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public String publicDns() {
+        return json.$("public_dns").toString();
+    }
+
+    @Override
+    public String url() {
+        return null;
+    }
+
 }

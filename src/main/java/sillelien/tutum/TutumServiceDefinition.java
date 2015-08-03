@@ -19,8 +19,12 @@
 package sillelien.tutum;
 
 /**
- * @author <a href="http://uk.linkedin.com/in/neilellis">Neil Ellis</a>
+ * (c) 2015 Cazcade Limited
+ *
+ * @author neil@cazcade.com
  */
-public enum ServiceAction {
-    START, STOP, REDEPLOY, TERMINATE
+public interface TutumServiceDefinition {
+    String name();
+
+    String asUpdate();
 }

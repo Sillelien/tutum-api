@@ -1,66 +1,68 @@
+/*
+ * Copyright (c) 2015 Sillelien
+ *
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package sillelien.tutum;
 
-import com.sillelien.dollar.api.var;
-
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
- * @author <a href="http://uk.linkedin.com/in/neilellis">Neil Ellis</a>
+ * @author neilellis@sillelien.com
  */
-public class TutumStack {
+public interface TutumStack {
 
+    /**
+     * Returns true if the stack is currently in a Running state.
+     *
+     * @return true if running
+     */
+    boolean isRunning();
 
+    /**
+     * Returns true if the stack is currently in a Starting state.
+     *
+     * @return true if running
+     */
+    boolean isStarting();
 
-    private final var json;
+    /**
+     * A user provided name for the stack.
+     *
+     * @return a user provided name for the stack.
+     */
+    String name();
 
-    public TutumStack(var json) {
+    /**
+     * A unique identifier for the stack generated automatically on creation
+     * @return a unique identifier for the stack generated automatically on creation
+     */
+    String uuid();
 
-        this.json = json;
-    }
+    /**
+     * A unique API endpoint that represents the stack.
+     *
+     * @return a unique API endpoint that represents the stack.
+     */
+    String uri();
 
-    public String asJsonString() {
-        return json.toJsonObject().toString();
-    }
-
-    public Map asMap() {
-        return json.toMap();
-    }
-
-    public var asVar() {
-        return json;
-    }
-
-    public boolean isRunning() {
-        return json.$("state").toString().equalsIgnoreCase("RUNNING");
-    }
-
-    public boolean isStarting() {
-        return json.$("state").toString().equalsIgnoreCase("STARTING");
-    }
-
-    public String state() {
-        return json.$("state").toString();
-    }
-
-
-    public String name() {
-        return json.$("name").toString();
-    }
-    public String uuid() {
-        return json.$("uuid").toString();
-    }
-
-    public String uri() {
-        return json.$("resource_uri").toString();
-    }
-
-    public List<TutumService> services() {
-        return json.$("services").$list().stream().map(TutumService::new).collect(Collectors.toList());
-    }
-
-    @Override public String toString() {
-        return json.toJsonObject().toString();
-    }
+    /**
+     * A list of services that make up the stack
+     *
+     * @return a list of services.
+     */
+    List<TutumService> services();
 }

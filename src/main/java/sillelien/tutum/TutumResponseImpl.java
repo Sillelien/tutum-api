@@ -18,9 +18,17 @@
 
 package sillelien.tutum;
 
+import com.sillelien.dollar.api.var;
+
 /**
- * @author <a href="http://uk.linkedin.com/in/neilellis">Neil Ellis</a>
+ * (c) 2015 Cazcade Limited
+ *
+ * @author neilellis@sillelien.com
  */
-public enum ServiceAction {
-    START, STOP, REDEPLOY, TERMINATE
+public class TutumResponseImpl extends VarBackedTutumObject  implements TutumResponse{
+
+    public TutumResponseImpl(var response) {
+
+        this.json = response;
+    }
 }

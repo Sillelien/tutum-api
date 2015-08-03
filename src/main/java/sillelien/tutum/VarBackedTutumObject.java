@@ -18,20 +18,41 @@
 
 package sillelien.tutum;
 
-import java.util.List;
+import com.sillelien.dollar.api.var;
+
+import java.util.Map;
 
 /**
  * (c) 2015 Cazcade Limited
  *
  * @author neil@cazcade.com
  */
-public interface TutumContainer {
+public class VarBackedTutumObject {
 
-    List<TutumPort> ports();
+    com.sillelien.dollar.api.var json;
 
-    String publicDns();
+    public Map<String, Object> asMap() {
+        return json.toMap();
+    }
 
-    String url();
+    public String uri() {
+        return json.$("resource_uri").toString();
+    }
 
-    String uuid();
+    @Override
+    public String toString() {
+        return json.toString();
+    }
+
+    public String uuid() {
+        return json.$("uuid").toString();
+    }
+
+    public var asVar() {
+        return json;
+    }
+
+    public String asJsonString() {
+        return json.toJsonObject().toString();
+    }
 }

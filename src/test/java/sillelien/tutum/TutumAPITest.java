@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 /**
  * (c) 2015 Cazcade Limited
  *
- * @author neil@cazcade.com
+ * @author neilellis@sillelien.com
  */
 public class TutumAPITest {
 
