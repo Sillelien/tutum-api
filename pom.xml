@@ -49,9 +49,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.sillelien</groupId>
+            <groupId>sillelien</groupId>
             <artifactId>dollar-core</artifactId>
-            <version>0.1.7</version>
+            <version>0.1.40</version>
         </dependency>
 
         <dependency>
@@ -169,5 +169,12 @@
             <url>s3://sillelien-maven-repo/snapshot</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>s3-releases</id>
+            <url>http://sillelien-maven-repo.s3-website-eu-west-1.amazonaws.com/release</url>
+        </repository>
+    </repositories>
 
 </project>
