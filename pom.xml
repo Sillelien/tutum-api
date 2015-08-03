@@ -6,7 +6,7 @@
 
     <groupId>sillelien</groupId>
     <artifactId>tutum-api</artifactId>
-    <version>0-SNAPSHOT</version>
+    <version>latest</version>
 
     <dependencies>
 
