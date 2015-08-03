@@ -1,7 +1,24 @@
 machine:
   java:
     version: oraclejdk8
+
 deployment:
+  staging:
+      branch: staging
+      commands:
+        - git config --global user.email "hello@neilellis.me"
+        - git config --global user.name "Neil Ellis"
+        - git reset HEAD --hard
+        - git clean -fd
+        - git checkout master
+        - git pull
+        - git merge staging -m "Auto merge"
+        - git push
+        - 'git commit -a -m "Promotion from staging" || :'
+        - "git tag 0.${CIRCLE_BUILD_NUM} || :"
+        - git push --tags
+        - git push origin master
+
   production:
       branch: master
       commands:
@@ -12,4 +29,4 @@ deployment:
         - mvn versions:lock-snapshots
 #        - mvn versions:commit
         - mvn -T 1C -Dmaven.test.skip=true -Drat.skip=true -DskipEnforcer -Dmaven.javadoc.skip=true -DgenerateReports=false package
-        - mvn -Dgpg.passphrase=${GPG_PASSPHRASE} -T 2C deploy
+        - mvn -T 2C -Dmaven.test.skip=true -Drat.skip=true -DskipEnforcer -Dmaven.javadoc.skip=true -DgenerateReports=false deploy
