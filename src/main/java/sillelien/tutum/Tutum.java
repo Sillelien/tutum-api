@@ -14,6 +14,20 @@ import java.util.concurrent.ExecutionException;
  * @author neil@cazcade.com
  */
 public interface Tutum {
+
+    /**
+     * <strong>Create a new stack</strong>
+     *
+     * <p> <a href="https://docs.tutum.co/v2/api/#create-a-new-stack">API Ref</a></p>
+     *
+     * <p>Creates a new stack without starting it. Note that the JSON syntax is abstracted by both, the Tutum CLI and our UI, in order to use Stack YAML files</p>
+     *
+     * <strong>HTTP REQUEST</strong>
+     * <p>POST /api/v1/stack/</p>
+     * @param stackName  A human-readable name for the stack, i.e. my-hello-world-stack
+     * @param stackServices List of services belonging to the stack.
+     * @return
+     */
     TutumStack createStack(String stackName, List<TutumService> stackServices);
 
     void linkServices(String linkName, String serviceFrom, String serviceTo);
@@ -30,7 +44,7 @@ public interface Tutum {
 
     String checkForStack(String name, ServiceExistsFunction<TutumStack, String> exists,
                          Callable<String> doesNotExist) throws
-                    Exception;
+            Exception;
 
     TutumResponse startService(String uuid) throws TutumException;
 
