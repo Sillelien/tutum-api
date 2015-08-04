@@ -15,10 +15,10 @@ deployment:
         - git reset HEAD --hard
         - git clean -fd
         - git checkout master
-        - echo ${release} > .release
         - git pull
         - git merge staging -m "Auto merge"
         - git push
+        - echo ${release} > .release
         - 'git commit -a -m "Promotion from staging" || :'
         - "git tag ${release} || :"
         - git push --tags
