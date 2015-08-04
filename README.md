@@ -15,7 +15,7 @@ And the dependency:
 <dependency>
     <groupId>sillelien</groupId>
     <artifactId>tutum-api</artifactId>
-    <version>${release}</version>
+    <version>0.0.41</version>
 </dependency>
 ```        
 
