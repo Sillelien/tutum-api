@@ -15,6 +15,7 @@ deployment:
         - git reset HEAD --hard
         - git clean -fd
         - git checkout master
+        - echo ${release} > .release
         - git pull
         - git merge staging -m "Auto merge"
         - git push
@@ -28,7 +29,7 @@ deployment:
       commands:
         - git config --global user.email "hello@neilellis.me"
         - git config --global user.name "Neil Ellis"
-        - mvn versions:set -DnewVersion=${release}
+        - mvn versions:set -DnewVersion=$(cat .release)
         - mvn versions:resolve-ranges
         - mvn versions:lock-snapshots
 #        - mvn versions:commit
