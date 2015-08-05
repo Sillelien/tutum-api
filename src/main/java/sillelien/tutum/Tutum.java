@@ -24,8 +24,8 @@ import java.util.concurrent.Callable;
 
 /**
  *
- * Tutum instances are stateless and therefor lightweight, use the following to create one:
- * <br/>
+ * <p>Tutum instances are stateless and therefor lightweight, use the following to create one:</p>
+ *
  * <pre><code>Tutum api= TutumAPI.instance();</code></pre>
  *
  * @author neilellis@sillelien.com
