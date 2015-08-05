@@ -150,7 +150,7 @@
                   <li id="publishDate">Last Published: 2015-08-05
                       <span class="divider">|</span>
                    </li>
-                  <li id="projectVersion">Version: 0.0.80
+                  <li id="projectVersion">Version: 0.0.84
                       </li>
                       
                 
@@ -318,30 +318,25 @@
 *****************************************************
 Summary
 -------
-Generated at: 2015-08-05T22:24:31+00:00
+Generated at: 2015-08-05T22:41:07+00:00
 Notes: 1
 Binaries: 0
 Archives: 0
-Standards: 32
+Standards: 26
 
-Apache Licensed: 25
+Apache Licensed: 24
 Generated Documents: 0
 
 JavaDocs are generated and so license header is optional
 Generated files do not required license headers
 
-7 Unknown Licenses
+2 Unknown Licenses
 
 *******************************
 
 Unapproved licenses:
 
-  .release
   README.md
-  circle.yml
-  src/site/markdown/README.md
-  src/site/markdown/test.md
-  src/site/resources/_index.html
   src/test/java/sillelien/tutum/TutumAPITest.java
 
 *******************************
@@ -353,10 +348,8 @@ Archives:
   Binary files (which do not require AL headers) will be marked B
   Compressed archives will be marked A
   Notices, licenses etc will be marked N
- !????? .release
   N     LICENSE
  !????? README.md
- !????? circle.yml
   AL    pom.xml
   AL    settings.xml
   AL    src/main/java/sillelien/tutum/Bug.java
@@ -379,10 +372,6 @@ Archives:
   AL    src/main/java/sillelien/tutum/TutumStack.java
   AL    src/main/java/sillelien/tutum/TutumStackImpl.java
   AL    src/main/java/sillelien/tutum/VarBackedTutumObject.java
- !????? src/site/markdown/README.md
- !????? src/site/markdown/test.md
- !????? src/site/resources/_index.html
-  AL    src/site/site.xml
  !????? src/test/java/sillelien/tutum/TutumAPITest.java
   AL    pom.xml.versionsBackup
   AL    dependency-reduced-pom.xml
@@ -391,11 +380,6 @@ Archives:
  Printing headers for files without AL header...
  
  
-=======================================================================
-==.release
-=======================================================================
-0.0.80
-
 =======================================================================
 ==README.md
 =======================================================================
@@ -420,6 +404,7 @@ And the dependency:
 &lt;/dependency&gt;
 ```        
 
+Please refer to the [JavaDocs](http://sillelien.github.io/tutum-api/apidocs/index.html) for documentation at present.
 
 
 ## Badges
@@ -429,63 +414,6 @@ Waffle Stories: [![Stories in Ready](https://badge.waffle.io/sillelien/tutum-api
 
 Dependencies: [![Dependency Status](https://www.versioneye.com/user/projects/55c0d20865376200200027e5/badge.svg?style=flat)](https://www.versioneye.com/user/projects/55c0d20865376200200027e5)
 
-
-=======================================================================
-==circle.yml
-=======================================================================
-machine:
-  environment:
-    RELEASE: 0.0.${CIRCLE_BUILD_NUM}
-    MAVEN_OPTS: &quot;-Xmx1g -DbuildNumber=${CIRCLE_BUILD_NUM} &quot;
-
-  java:
-    version: oraclejdk8
-
-dependencies:
-  pre:
-    - cd ~ &amp;&amp; git clone https://github.com/sillelien/build-utils.git &amp;&amp; chmod a+x ~/build-utils/*.sh
-    - &quot;[[ ${CIRCLE_BRANCH} != 'master' ]] || ( mvn versions:set -DnewVersion=$(cat .release) &amp;&amp; mvn versions:resolve-ranges &amp;&amp; mvn versions:lock-snapshots )&quot;
-    - mvn -T 1C -Dmaven.test.skip=true -Drat.skip=true -DskipEnforcer -Dmaven.javadoc.skip=true -DgenerateReports=false install
-
-
-deployment:
-  staging:
-      branch: staging
-      commands:
-         - ~/build-utils/promote_from_staging.sh
-
-  production:
-      branch: master
-      commands:
-        - git config --global user.email &quot;hello@neilellis.me&quot;
-        - git config --global user.name &quot;Neil Ellis&quot;
-        - mvn -T 1C -Dmaven.test.skip=true -Drat.skip=true -DskipEnforcer -Dmaven.javadoc.skip=true -DgenerateReports=false deploy
-        - envsubst &lt; settings.xml &gt; ~/.m2/settings.xml
-        - mvn -T 1C site
-
-=======================================================================
-==src/site/markdown/README.md
-=======================================================================
-
-=======================================================================
-==src/site/markdown/test.md
-=======================================================================
-Hello World
-
-=======================================================================
-==src/site/resources/_index.html
-=======================================================================
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head lang=&quot;en&quot;&gt;
-    &lt;meta http-equiv=&quot;refresh&quot; content=&quot;0; url=http://neilellis.github.io/dollar/README.html&quot;/&gt;
-    &lt;meta charset=&quot;UTF-8&quot;&gt;
-    &lt;title&gt;&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;
 
 =======================================================================
 ==src/test/java/sillelien/tutum/TutumAPITest.java
