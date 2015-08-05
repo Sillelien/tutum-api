@@ -94,7 +94,7 @@
             <!--<item name="Page 3" href="http://google.com/"/>-->
         </links>
 
-        <menu name="dollar">
+        <menu name="Tutum API">
             <item name="Main Website" href="index.html"/>
             <item name="Sillelien" href="http://sillelien.com"/>
             <item name="Source" href="https://github.com/sillelien/tutum-api"/>
