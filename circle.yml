@@ -1,30 +1,21 @@
 machine:
   environment:
-    release: 0.0.${CIRCLE_BUILD_NUM}
+    RELEASE: 0.0.${CIRCLE_BUILD_NUM}
     MAVEN_OPTS: "-Xmx1g -DbuildNumber=${CIRCLE_BUILD_NUM} "
 
   java:
     version: oraclejdk8
 
+dependencies:
+  pre:
+    - cd ~ && git clone https://github.com/sillelien/build-utils.git && chmod a+x ~/build-utils/*.sh
+
+
 deployment:
   staging:
       branch: staging
       commands:
-        - git config --global user.email "hello@neilellis.me"
-        - git config --global user.name "Neil Ellis"
-        - git reset HEAD --hard
-        - git clean -fd
-        - git checkout master
-        - git pull
-        - git merge staging -m "Auto merge"
-        - git push
-        - echo ${release} > .release
-        - envsubst < README.md > README.expanded
-        - mv README.expanded README.md
-        - 'git commit -a -m "Promotion from staging" || :'
-        - "git tag ${release} || :"
-        - git push --tags
-        - git push origin master
+         - ~/build-utils/promote_from_staging.sh
 
   production:
       branch: master
