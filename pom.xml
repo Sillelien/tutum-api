@@ -116,6 +116,13 @@
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
                 <version>0.11</version>
+                <configuration>
+                    <excludes>
+                        <exclude>src/site/**</exclude>
+                        <exclude>*.yml</exclude>
+                        <exclude>.release</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
 
             <!--Not 1.8 compatible yet-->

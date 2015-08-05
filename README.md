@@ -19,6 +19,7 @@ And the dependency:
 </dependency>
 ```        
 
+Please refer to the [JavaDocs](http://sillelien.github.io/tutum-api/apidocs/index.html) for documentation at present.
 
 
 ## Badges
