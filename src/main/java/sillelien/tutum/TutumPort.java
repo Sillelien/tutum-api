@@ -18,35 +18,17 @@
 
 package sillelien.tutum;
 
-import com.sillelien.dollar.api.var;
-
 /**
- * @author <a href="http://uk.linkedin.com/in/neilellis">Neil Ellis</a>
+ * (c) 2015 Cazcade Limited
+ *
+ * @author neil@cazcade.com
  */
-public class TutumPort  {
-    private final var json;
+public interface TutumPort {
+    String endpointUri();
 
-    public TutumPort(var json) {this.json = json;}
+    boolean hasEndpointUri();
 
-    public String endpointUri() {
-        return json.$("endpoint_uri").toString();
-    }
+    boolean hasOuterPort();
 
-    public boolean hasEndpointUri() {
-        return !json.$("endpoint_uri").isNull();
-    }
-
-    public boolean hasOuterPort() {
-        final var outerPort = json.$("outer_port");
-        return !outerPort.isVoid();
-    }
-
-
-    public int outerPort() {
-        return json.$("outer_port").toInteger();
-    }
-
-    public String toString() {
-        return json.toString();
-    }
+    int outerPort();
 }

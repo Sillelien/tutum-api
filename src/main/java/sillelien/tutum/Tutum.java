@@ -23,7 +23,10 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 /**
- * (c) 2015 Cazcade Limited
+ *
+ * Tutum instances are stateless and therefor lightweight, use the following to create one:
+ * <br/>
+ * <pre><code>Tutum api= TutumAPI.instance();</code></pre>
  *
  * @author neilellis@sillelien.com
  */
