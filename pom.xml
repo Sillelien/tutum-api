@@ -112,11 +112,19 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.12</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-descriptor</id>
+                        <goals>
+                            <goal>attach-descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <message>Creating site for ${project.version}</message>
+                    <locales>en</locales>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -130,6 +138,15 @@
                         <version>1.4</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.12</version>
+                <configuration>
+                    <message>Creating site for ${project.version}</message>
+                </configuration>
+
                 <executions>
                     <execution>
                         <goals>
