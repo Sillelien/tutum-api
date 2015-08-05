@@ -12,6 +12,43 @@
         <github.global.server>github</github.global.server>
     </properties>
 
+
+    <description>Tutum.co Java API</description>
+    <ciManagement>
+        <url>https://circleci.com/gh/sillelian/tutum-api/tree/master</url>
+    </ciManagement>
+    <developers>
+        <developer>
+            <name>Neil Ellis</name>
+            <organization>Neil Ellis</organization>
+            <organizationUrl>http://neilellis.me</organizationUrl>
+            <roles>
+                <role>founder</role>
+                <role>developer</role>
+            </roles>
+            <timezone>GMT</timezone>
+            <email>hello@neilellis.me</email>
+        </developer>
+    </developers>
+
+    <url>http://sillien.github.io/tutum-api/</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/sillelien/tutum-api/blob/master/</url>
+        <connection>scm:git:git@github.com:sillelien/tutum-api.git</connection>
+        <developerConnection>scm:git:git@github.com:sillelien/tutum-api.git</developerConnection>
+    </scm>
+
+
+
     <dependencies>
 
         <dependency>

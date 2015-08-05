@@ -24,6 +24,6 @@ deployment:
       commands:
         - git config --global user.email "hello@neilellis.me"
         - git config --global user.name "Neil Ellis"
-        - mvn -T 2C -Dmaven.test.skip=true -Drat.skip=true -DskipEnforcer -Dmaven.javadoc.skip=true -DgenerateReports=false deploy
+        - mvn -T 1C -Dmaven.test.skip=true -Drat.skip=true -DskipEnforcer -Dmaven.javadoc.skip=true -DgenerateReports=false deploy
         - envsubst < settings.xml > ~/.m2/settings.xml
-        - mvn -T 2C site
+        - mvn -T 1C site
