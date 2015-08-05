@@ -28,8 +28,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A very simple cache using java.util.concurrent. <p/> User: treeder, innovativeravi Date: Mar 15, 2009 Time: 8:42:01
- * PM
+ * A very simple cache using java.util.concurrent.
  */
 public class SuperSimpleCache<K, V> {
 
