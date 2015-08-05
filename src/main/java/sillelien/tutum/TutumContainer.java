@@ -21,9 +21,9 @@ package sillelien.tutum;
 import java.util.List;
 
 /**
- * (c) 2015 Cazcade Limited
  *
- * @author neil@cazcade.com
+ *
+ * @author neilellis@sillelien.com
  */
 public interface TutumContainer {
 
