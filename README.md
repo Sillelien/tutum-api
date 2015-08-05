@@ -13,7 +13,7 @@ And the dependency:
 
 ```
 <dependency>
-    <groupId>sillelien</groupId>
+    <groupId>com.sillelien</groupId>
     <artifactId>tutum-api</artifactId>
     <version>${RELEASE}</version>
 </dependency>
