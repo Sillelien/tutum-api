@@ -21,7 +21,6 @@ package sillelien.tutum;
 import com.sillelien.dollar.api.var;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +35,7 @@ public class TutumContainerImpl extends VarBackedTutumObject implements TutumCon
 
     @Override
     public List<TutumPort> ports() {
-        return json.$("container_ports").$list().stream().map(TutumPort::new).collect(Collectors.toList());
+        return json.$("container_ports").$list().stream().map(TutumPortImpl::new).collect(Collectors.toList());
     }
 
     @Override

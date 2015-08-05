@@ -18,20 +18,37 @@
 
 package sillelien.tutum;
 
-import java.util.List;
+import com.sillelien.dollar.api.var;
 
 /**
  *
  *
  * @author neilellis@sillelien.com
+ *
  */
-public interface TutumContainer {
+public class TutumPortImpl extends VarBackedTutumObject implements TutumPort {
 
-    List<TutumPort> ports();
+    public TutumPortImpl(var json) {this.json = json;}
 
-    String publicDns();
+    @Override
+    public String endpointUri() {
+        return json.$("endpoint_uri").toString();
+    }
 
-    String url();
+    @Override
+    public boolean hasEndpointUri() {
+        return !json.$("endpoint_uri").isNull();
+    }
 
-    String uuid();
+    @Override
+    public boolean hasOuterPort() {
+        final var outerPort = json.$("outer_port");
+        return !outerPort.isVoid();
+    }
+
+    @Override
+    public int outerPort() {
+        return json.$("outer_port").toInteger();
+    }
+
 }

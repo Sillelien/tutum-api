@@ -1,11 +1,8 @@
 package sillelien.tutum;
 
-import com.sillelien.dollar.api.var;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -28,7 +25,7 @@ public class TutumAPITest {
 
     @Test
     public void testExec() throws Exception {
-        Tutum api = new TutumAPI();
+        Tutum api = TutumAPI.instance();
         TutumService service = api.getServiceByName("tutum-api-exec-test");
         String containerUrl = service.containers().get(0);
         TutumContainer container = api.getContainer(containerUrl);

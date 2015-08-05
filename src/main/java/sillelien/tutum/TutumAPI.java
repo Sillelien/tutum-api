@@ -105,6 +105,13 @@ public class TutumAPI implements Tutum {
                 .permit(ServiceAction.TERMINATE, ServiceState.TERMINATING);
     }
 
+    private TutumAPI() {
+    }
+
+    public static TutumAPI instance() {
+        return new TutumAPI();
+    }
+
     @Override
     public TutumStack createStack(String stackName, List<TutumService> stackServices) {
         final List<var> services = stackServices.stream().map(tutumService -> ((TutumServiceImpl) (tutumService)).asVar()).collect(Collectors.toList());

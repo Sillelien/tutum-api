@@ -100,7 +100,7 @@ public class TutumServiceImpl extends VarBackedTutumObject implements TutumServi
 
     @Override
     public List<TutumPort> containerPorts() {
-        return json.$("container_ports").$list().stream().map(TutumPort::new).collect(Collectors.toList());
+        return json.$("container_ports").$list().stream().map(TutumPortImpl::new).collect(Collectors.toList());
     }
 
 
