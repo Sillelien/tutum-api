@@ -15,13 +15,13 @@ And the dependency:
 <dependency>
     <groupId>com.sillelien</groupId>
     <artifactId>tutum-api</artifactId>
-    <version>0.1.98</version>
+    <version>0.1.100</version>
 </dependency>
 ```        
 
 Please refer to the [JavaDocs](http://sillelien.github.io/tutum-api/apidocs/index.html) for documentation at present.
 
-
+**If you use this library please consider giving us a star on [GitHub](http://github.com/sillelien/tutum-api) . Also if you can spare 30 secs of your time please let us know your priorities here https://sillelien.wufoo.com/forms/zv51vc704q9ary/  - thanks, that really helps!**
 
 ## Badges
 Build Status: [![Circle CI](https://circleci.com/gh/sillelien/tutum-api.svg?style=svg)](https://circleci.com/gh/sillelien/tutum-api)
