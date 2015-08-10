@@ -15,17 +15,15 @@ And the dependency:
 <dependency>
     <groupId>com.sillelien</groupId>
     <artifactId>tutum-api</artifactId>
-    <version>0.1.92</version>
+    <version>0.1.98</version>
 </dependency>
 ```        
 
 Please refer to the [JavaDocs](http://sillelien.github.io/tutum-api/apidocs/index.html) for documentation at present.
 
-${BLURB}
+
 
 ## Badges
-
-[![Join the chat at https://gitter.im/sillelien/tutum-api](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sillelien/tutum-api?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Build Status: [![Circle CI](https://circleci.com/gh/sillelien/tutum-api.svg?style=svg)](https://circleci.com/gh/sillelien/tutum-api)
 
 Waffle Stories: [![Stories in Ready](https://badge.waffle.io/sillelien/tutum-api.png?label=ready&title=Ready)](https://waffle.io/sillelien/tutum-api)
