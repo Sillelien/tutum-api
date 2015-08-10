@@ -21,6 +21,7 @@ And the dependency:
 
 Please refer to the [JavaDocs](http://sillelien.github.io/tutum-api/apidocs/index.html) for documentation at present.
 
+${BLURB}
 
 ## Badges
 Build Status: [![Circle CI](https://circleci.com/gh/sillelien/tutum-api.svg?style=svg)](https://circleci.com/gh/sillelien/tutum-api)

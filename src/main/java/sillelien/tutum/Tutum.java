@@ -24,7 +24,7 @@ import java.util.concurrent.Callable;
 
 /**
  *
- * <p>Tutum instances are stateless and therefor lightweight, use the following to create one:</p>
+ * <p>Tutum instances are stateless and therefore lightweight, use the following to create one:</p>
  *
  * <pre><code>Tutum api= TutumAPI.instance();</code></pre>
  *
@@ -32,7 +32,7 @@ import java.util.concurrent.Callable;
  */
 public interface Tutum {
 
-    /* Containers */
+    /* Stacks */
 
     /**
      * <strong>Create a new stack</strong>
