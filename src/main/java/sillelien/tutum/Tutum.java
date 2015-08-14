@@ -192,6 +192,21 @@ public interface Tutum {
      */
     TutumResponse startService(String uuid) throws TutumException;
 
+    /**
+     * <strong>Starts a service</strong>
+     * <p> <a href="https://docs.tutum.co/v2/api/#start-a-service">API Ref</a></p>
+     * <p>Starts all containers in a stopped or partly running service.</p>
+     * <strong>HTTP REQUEST</strong>
+     * <p>POST /api/v1/service/(uuid)/start/</p>
+     *
+     * @param service service you wish to start
+     * @return the response from Tutum if any
+     * @throws TutumException if something goes wrong
+     */
+    default TutumResponse startService(TutumService service) throws TutumException {
+        return startService(service.uuid());
+    }
+
 
     /**
      * Checks to see if a service exists
